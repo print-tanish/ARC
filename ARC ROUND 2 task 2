@@ -1,0 +1,46 @@
+import cv2 
+import numpy as np
+import matplotlib.pyplot as plt
+
+image_path = 'C:\Tanish\Clubs\ARC\bits ss.jpg' 
+image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+
+# Check if image loaded correctly
+if image is None:
+    print("Error: Could not load image.")
+    exit()
+
+
+# Gaussian Blur 
+blurred_image = cv2.GaussianBlur(image, (5, 5), 0)
+
+# Step 2: Compute Sobel gradients in the x and y directions
+# Sobel kernel for x direction (1st derivative of the image in the x direction)
+sobel_x = cv2.Sobel(blurred_image, cv2.CV_64F, 1, 0, ksize=3)
+
+# Sobel kernel for y direction (1st derivative of the image in the y direction)
+sobel_y = cv2.Sobel(blurred_image, cv2.CV_64F, 0, 1, ksize=3)
+
+# Step 3: Compute the gradient magnitude
+gradient_magnitude = np.sqrt(sobel_x ** 2 + sobel_y ** 2)
+
+# Normalize the gradient for visualization
+gradient_magnitude = cv2.normalize(gradient_magnitude, None, 0, 255, cv2.NORM_MINMAX)
+
+# Convert to uint8 to display the image properly
+gradient_magnitude = np.uint8(gradient_magnitude)
+
+# Step 4: Save the result to a file and display it
+cv2.imwrite('gradient_image.jpg', gradient_magnitude)
+
+# Display the original and gradient image using Matplotlib
+plt.figure(figsize=(10, 5))
+plt.subplot(1, 2, 1)
+plt.title('Original Image')
+plt.imshow(image, cmap='gray')
+
+plt.subplot(1, 2, 2)
+plt.title('Gradient Magnitude Image')
+plt.imshow(gradient_magnitude, cmap='gray')
+
+plt.show()
